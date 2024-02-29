@@ -1,5 +1,5 @@
-### Example LAMMPS input file for running active copolymer simulation at F=80 (force density = 1)
-####################################################################################################
+### CCM: BD run with dipoalr active force (with force density, rho_F = 0.5)
+
 ### Basic System Setting
 units lj
 atom_style bond
@@ -8,17 +8,19 @@ dimension 3
 boundary s s s
 
 ### Read configuration file
-read_data init_config_files/chr5/den_1/init_config_r${r}  ### r = trajectory number
+read_data init_config_files/chr5/den_0.5/init_config_r${r}
 
 neighbor 2.0 bin
 neigh_modify every 1 delay 0 one 100000 page 1000000 check yes
-group euchromatin type 1
-group heterochr type 2
+#group euchromatin type 1
+#group heterochr type 2
+group ON type 3
+group OFF type 1 2 
 
 pair_style  lj/cut 3.0
-pair_coeff  1 1 2.4 1.0 3.0
+pair_coeff  * * 2.4 1.0 3.0
 pair_coeff  1 2 1.96 1.0 3.0
-pair_coeff  2 2 2.4 1.0 3.0
+pair_coeff  2 3 1.96 1.0 3.0
 pair_modify  shift yes
 
 bond_style hybrid harmonic fene
@@ -30,8 +32,8 @@ variable seed1 equal ceil(${r}*100)
 variable seed2 equal ceil(${r}*100+1)
 
 ### Fix Command
-fix ensemble_1 euchromatin bd/active/polymer 1.00 0.00007939 ${seed1} 80 1
-fix ensemble_2 heterochr bd 1.00 0.00007939 ${seed2}
+fix ensemble_1 ON bd/active/polymer 1.00 0.00007939 ${seed1} 80 1
+fix ensemble_2 OFF bd 1.00 0.00007939 ${seed2}
 fix cm_fix all recenter 0.0 0.0 0.0 units box
 
 ### Compute & Thermo Command
@@ -41,7 +43,7 @@ timestep 1.26
 
 ### Relaxation for BD run
 thermo	 10000
-run      1000000
+run      2000000
 reset_timestep 0
 
 ### Dump for dynamical statistics 
@@ -51,21 +53,23 @@ dump     dump_long all xyz 10000 traj_long_r${r}.xyz
 dump     dump_longer all xyz 50000 traj_longer_r${r}.xyz
 
 ### Run for short-time scale
-thermo   1000
+thermo	 1000
 run      40000
-undump   dump_short
+undump	 dump_short
 
 ### Run for mid-time scale
-thermo   100000
+thermo	 100000
 run      19960000
-undump   dump_mid
+undump	 dump_mid
 
 ### Run for long-time scale (pt. 1)
-thermo   10000000
+thermo	 10000000
 restart  20000000 long_r${r}.restart
-run      80000000
+run	 80000000
 undump   dump_long
 
 ### Run for long-time regime (pt. 2)
 run     100000000
+
+
 
