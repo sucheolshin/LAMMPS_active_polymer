@@ -28,3 +28,9 @@ fix ID group-ID bd/active/polymer temperature damp seed fmag tau_act
 The active force with the magnitude of `fmag` is applied on the specified group of atoms, every `tau_act` time steps in average. Setting `tau_act` to 1 makes the force applied every time step, which condition was used in the simulations for Shin *et al.*
 
 ## LAMMPS input scripts
+* `lmps_ccm_bd_active.in`
+* `lmps_ccm_bd_active_quench.in`
+* `lmps_ccm_bd_active_no-loop.in`
+* `lmps_ccm_bd_active_f-den_0.5.in`
+* `lmps_ccm_bd_active_g1.in`
+* `lmps_ccm_bd_active_l2.in`
